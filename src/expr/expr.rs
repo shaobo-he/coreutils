@@ -23,23 +23,30 @@ pub fn uumain(args: Vec<String>) -> i32 {
     // For expr utility we do not want getopts.
     // The following usage should work without escaping hyphens: `expr -15 = 1 +  2 \* \( 3 - -4 \)`
 
-    if maybe_handle_help_or_version(&args) {
-        0
-    } else {
-        let token_strings = args[1..].to_vec();
+    //if maybe_handle_help_or_version(&args) {
+    //    0
+    //} else {
+    //    let token_strings = args[1..].to_vec();
 
-        match process_expr(&token_strings) {
-            Ok(expr_result) => print_expr_ok(&expr_result),
-            Err(expr_error) => print_expr_error(&expr_error),
-        }
+    //    match process_expr(&token_strings) {
+    //        Ok(expr_result) => print_expr_ok(&expr_result),
+    //        Err(expr_error) => print_expr_error(&expr_error),
+    //    }
+    //}
+    match process_expr() {
+        Ok(expr_result) => print_expr_ok(&expr_result),
+        Err(expr_error) => print_expr_error(&expr_error),
     }
 }
 
-fn process_expr(token_strings: &Vec<String>) -> Result<String, String> {
-    let maybe_tokens = tokens::strings_to_tokens(&token_strings);
-    let maybe_ast = syntax_tree::tokens_to_ast(maybe_tokens);
+//fn process_expr(token_strings: &Vec<String>) -> Result<String, String> {
+fn process_expr() -> Result<String, String> {
+    //let maybe_tokens = tokens::strings_to_tokens(&token_strings);
+    //let maybe_ast = syntax_tree::tokens_to_ast(maybe_tokens);
+    let maybe_ast = syntax_tree::create_ast();
     evaluate_ast(maybe_ast)
 }
+
 
 fn print_expr_ok(expr_result: &String) -> i32 {
     println!("{}", expr_result);

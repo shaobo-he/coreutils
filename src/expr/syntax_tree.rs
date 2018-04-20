@@ -244,6 +244,15 @@ fn ast_from_rpn(rpn: &mut TokenStack) -> Result<Box<ASTNode>, String> {
         }
     }
 }
+
+pub fn create_ast() -> Result<Box<ASTNode>, String> {
+  // first let's try addition
+  let mut operands = Vec::new();
+  operands.push(ASTNode::new_leaf(0, &String::from("42")));
+  operands.push(ASTNode::new_leaf(0, &String::from("24")));
+  Ok(ASTNode::new_node(0,&String::from("+"),operands))
+}
+
 fn maybe_ast_node(
     token_idx: usize,
     op_type: &String,
@@ -388,15 +397,30 @@ fn infix_operator_two_ints<F>(f: F, values: &Vec<String>) -> Result<String, Stri
 where
     F: Fn(i64, i64) -> Result<i64, String>,
 {
-    assert!(values.len() == 2);
-    if let Some(left) = values[0].parse::<i64>().ok() {
-        if let Some(right) = values[1].parse::<i64>().ok() {
-            return match f(left, right) {
-                Ok(result) => Ok(result.to_string()),
-                Err(reason) => Err(reason),
-            };
-        }
-    }
+    //TODO: constrain parse here
+    //assert!(values.len() == 2);
+    //if let Some(left) = values[0].parse::<i64>().ok() {
+    //    if let Some(right) = values[1].parse::<i64>().ok() {
+    //        return match f(left, right) {
+    //            Ok(result) => Ok(result.to_string()),
+    //            Err(reason) => Err(reason),
+    //        };
+    //    }
+    //}
+    let left = 42;
+    let right = 24;
+    return match f(left, right) {
+        Ok(result) => Ok(result.to_string()),
+        Err(reason) => Err(reason),
+    };
+    //    }
+    //    if let Some(right) = values[1].parse::<i64>().ok() {
+    //        return match f(left, right) {
+    //            Ok(result) => Ok(result.to_string()),
+    //            Err(reason) => Err(reason),
+    //        };
+    //    }
+    //}
     Err("Expected an integer operand".to_string())
 }
 
