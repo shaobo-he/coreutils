@@ -143,7 +143,7 @@ fn print_factors(num: u64) {
     let mut factors = Vec::new();
     // we always start with table division, and go from there
     table_division(num, &mut factors);
-    factors.sort();
+    //factors.sort();
 
     for fac in &factors {
         print!(" {}", fac);
