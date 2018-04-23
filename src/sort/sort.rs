@@ -149,6 +149,7 @@ impl<'a> Iterator for FileMerger<'a> {
 
 pub fn uumain(args: Vec<String>) -> i32 {
     let mut settings: Settings = Default::default();
+/*
     let mut opts = getopts::Options::new();
 
     opts.optflag(
@@ -220,34 +221,36 @@ With no FILE, or when FILE is -, read standard input.",
         println!("{} {}", NAME, VERSION);
         return 0;
     }
+*/
 
-    settings.mode = if matches.opt_present("numeric-sort") {
-        SortMode::Numeric
-    } else if matches.opt_present("human-numeric-sort") {
-        SortMode::HumanNumeric
-    } else if matches.opt_present("month-sort") {
-        SortMode::Month
-    } else if matches.opt_present("version-sort") {
-        SortMode::Version
-    } else {
-        SortMode::Default
-    };
+    //settings.mode = if matches.opt_present("numeric-sort") {
+    //    SortMode::Numeric
+    //} else if matches.opt_present("human-numeric-sort") {
+    //    SortMode::HumanNumeric
+    //} else if matches.opt_present("month-sort") {
+    //    SortMode::Month
+    //} else if matches.opt_present("version-sort") {
+    //    SortMode::Version
+    //} else {
+    //    SortMode::Default
+    //};
+    settings.mode = SortMode::Numeric;
 
-    settings.merge = matches.opt_present("merge");
-    settings.reverse = matches.opt_present("reverse");
-    settings.outfile = matches.opt_str("output");
-    settings.stable = matches.opt_present("stable");
-    settings.unique = matches.opt_present("unique");
-    settings.check = matches.opt_present("check");
-    settings.ignore_case = matches.opt_present("ignore-case");
+    //settings.merge = matches.opt_present("merge");
+    //settings.reverse = matches.opt_present("reverse");
+    //settings.outfile = matches.opt_str("output");
+    //settings.stable = matches.opt_present("stable");
+    //settings.unique = matches.opt_present("unique");
+    //settings.check = matches.opt_present("check");
+    //settings.ignore_case = matches.opt_present("ignore-case");
 
-    let mut files = matches.free;
-    if files.is_empty() {
-        /* if no file, default to stdin */
-        files.push("-".to_owned());
-    } else if settings.check && files.len() != 1 {
-        crash!(1, "sort: extra operand `{}' not allowed with -c", files[1])
-    }
+    //let mut files = matches.free;
+    //if files.is_empty() {
+    //    /* if no file, default to stdin */
+    //    files.push("-".to_owned());
+    //} else if settings.check && files.len() != 1 {
+    //    crash!(1, "sort: extra operand `{}' not allowed with -c", files[1])
+    //}
 
     settings.compare_fns.push(match settings.mode {
         SortMode::Numeric => numeric_compare,
@@ -264,34 +267,39 @@ With no FILE, or when FILE is -, read standard input.",
         }
     }
 
-    exec(files, &settings)
+    //exec(files, &settings)
+    exec(&settings)
 }
 
-fn exec(files: Vec<String>, settings: &Settings) -> i32 {
+//fn exec(files: Vec<String>, settings: &Settings) -> i32 {
+fn exec(settings: &Settings) -> i32 {
     let mut lines = Vec::new();
     let mut file_merger = FileMerger::new(&settings);
 
-    for path in &files {
-        let (reader, _) = match open(path) {
-            Some(x) => x,
-            None => continue,
-        };
+    //for path in &files {
+    //    let (reader, _) = match open(path) {
+    //        Some(x) => x,
+    //        None => continue,
+    //    };
 
-        let buf_reader = BufReader::new(reader);
+    //    let buf_reader = BufReader::new(reader);
 
-        if settings.merge {
-            file_merger.push_file(buf_reader.lines());
-        } else if settings.check {
-            return exec_check_file(buf_reader.lines(), &settings);
-        } else {
-            for line in buf_reader.lines() {
-                if let Ok(n) = line {
-                    lines.push(n);
-                } else {
-                    break;
-                }
-            }
-        }
+    //    if settings.merge {
+    //        file_merger.push_file(buf_reader.lines());
+    //    } else if settings.check {
+    //        return exec_check_file(buf_reader.lines(), &settings);
+    //    } else {
+    //        for line in buf_reader.lines() {
+    //            if let Ok(n) = line {
+    //                lines.push(n);
+    //            } else {
+    //                break;
+    //            }
+    //        }
+    //    }
+    //}
+    for i in 1..10 {
+      lines.push(i.to_string());
     }
 
     sort_by(&mut lines, &settings);
@@ -395,6 +403,8 @@ fn permissive_f64_parse(a: &str) -> f64 {
 fn numeric_compare(a: &String, b: &String) -> Ordering {
     let fa = permissive_f64_parse(a);
     let fb = permissive_f64_parse(b);
+    //println!("fa: {}", fa);
+    //println!("fb: {}", fb);
     // f64::cmp isn't implemented because NaN messes with it
     // but we sidestep that with permissive_f64_parse so just fake it
     if fa > fb {
