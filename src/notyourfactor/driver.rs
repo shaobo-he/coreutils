@@ -17,15 +17,22 @@ fn main() {
     factors: [0; 20],
     nums: 0,
   };
-  
+  let n = 60;
+  // GNU
   let t1: u64 = 0;
-  let t0    : u64 = 6;
-  let mut c_factors = c_factors{plarge: [0;2], p: [0;26], e: [0;26], nfactors: 0};	
-  unsafe { factor(t1, t0, &mut c_factors) };
+  let t0: u64 = n;
+  let mut gnu_factors = c_factors{plarge: [0;2], p: [0;26], e: [0;26], nfactors: 0};	
+  unsafe { factor(t1, t0, &mut gnu_factors) };
 
+  // Rust
+  table_division(n, &mut factors);
 
-  table_division(6, &mut factors);
+  println!("{} {}", factors.nums, gnu_factors.nfactors);
+//  assert!(factors.nums == gnu_factors.nfactors);
   for i in 0..factors.nums {
-    println!("{}", factors.factors[i as usize]);
+    println!("Rust: factor_{}={}", i, factors.factors[i as usize]);
+
+    // GNU
+    println!("GNU:  factor_{}={}", i, gnu_factors.p[i as usize]);
   }
 }
