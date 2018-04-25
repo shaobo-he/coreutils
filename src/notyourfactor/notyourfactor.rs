@@ -11,8 +11,10 @@ pub struct Factors {
 
 impl Factors {
   fn add_factor(&mut self, factor: u64) {
-    self.factors[self.nums as usize] = factor;
-    self.nums += 1;
+    if !(self.nums != 0 && self.factors[(self.nums - 1) as usize] == factor) {
+      self.factors[self.nums as usize] = factor;
+      self.nums += 1;
+    }
   }
 }
 
