@@ -17,7 +17,7 @@ fn main() {
     factors: [0; 20],
     nums: 0,
   };
-  let n = 60;
+  let n = 540;
   // GNU
   let t1: u64 = 0;
   let t0: u64 = n;
@@ -27,8 +27,13 @@ fn main() {
   // Rust
   table_division(n, &mut factors);
 
+  let mut gnu_num_factors = 0;
+  for i in 0..26 {
+    gnu_num_factors += gnu_factors.e[i];
+  }
+
   println!("{} {}", factors.nums, gnu_factors.nfactors);
-//  assert!(factors.nums == gnu_factors.nfactors);
+  assert!(factors.nums == gnu_num_factors);
   for i in 0..factors.nums {
     println!("Rust: factor_{}={}", i, factors.factors[i as usize]);
 
