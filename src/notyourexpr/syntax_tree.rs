@@ -14,6 +14,7 @@
 //!
 
 use smack::*;
+use smack::Box;
 
 //use tokens::Token;
 //use onig::{Regex, RegexOptions, Syntax};
@@ -24,20 +25,20 @@ pub type OperandsList = Vec<Box<ASTNode>>;
 pub enum ASTNode {
     Leaf {
         token_idx: usize,
-        value: String,
+        value: i64,
     },
     Node {
         token_idx: usize,
-        op_type: String,
+        op_type: char,
         operands: OperandsList,
     },
 }
 
-impl Default for ASTNode {
+/*impl Default for ASTNode {
   fn default() -> ASTNode {
-    ASTNode::Leaf{token_idx: 0, value: String::from("")}
+    ASTNode::Leaf{token_idx: 0, value: 0}
   }
-}
+}*/
 
 impl ASTNode {
     // fn debug_dump(&self) {
@@ -75,32 +76,32 @@ impl ASTNode {
     //     }
     // }
 
-    fn new_node(token_idx: usize, op_type: &String, operands: OperandsList) -> Box<ASTNode> {
+    fn new_node(token_idx: usize, op_type: char, operands: OperandsList) -> Box<ASTNode> {
         Box::new(ASTNode::Node {
             token_idx: token_idx,
-            op_type: op_type.clone(),
+            op_type: op_type,
             operands: operands,
         })
     }
-    fn new_leaf(token_idx: usize, value: &String) -> Box<ASTNode> {
+    fn new_leaf(token_idx: usize, value: i64) -> Box<ASTNode> {
         Box::new(ASTNode::Leaf {
             token_idx: token_idx,
-            value: value.clone(),
+            value: value,
         })
     }
-    pub fn evaluate(&self) -> Result<String, String> {
+    pub fn evaluate(&self) -> Result<i64, u8> {
         match *self {
-            ASTNode::Leaf { ref value, .. } => Ok(value.clone()),
+            ASTNode::Leaf { ref value, .. } => Ok(*value),
             ASTNode::Node { ref op_type, .. } => match self.operand_values() {
                 Err(reason) => Err(reason),
-                Ok(operand_values) => match op_type.get(0) {
+                Ok(operand_values) => match *op_type {
                     '+' => infix_operator_two_ints(|a: i64, b: i64| Ok(a + b), &operand_values),
                     '-' => infix_operator_two_ints(|a: i64, b: i64| Ok(a - b), &operand_values),
                     '*' => infix_operator_two_ints(|a: i64, b: i64| Ok(a * b), &operand_values),
                     '/' => infix_operator_two_ints(
                         |a: i64, b: i64| {
                             if b == 0 {
-                                Err(String::from(""))
+                                Err(2)
                             } else {
                                 Ok(a / b)
                             }
@@ -110,7 +111,7 @@ impl ASTNode {
                     '%' => infix_operator_two_ints(
                         |a: i64, b: i64| {
                             if b == 0 {
-                                Err(String::from(""))
+                                Err(3)
                             } else {
                                 Ok(a % b)
                             }
@@ -155,12 +156,12 @@ impl ASTNode {
                     // "index" => prefix_operator_index(&operand_values),
                     // "substr" => prefix_operator_substr(&operand_values),
 
-                    _ => Err(String::from("")),
+                    _ => Err(1),
                 },
             },
         }
     }
-    pub fn operand_values(&self) -> Result<Vec<String>, String> {
+    pub fn operand_values(&self) -> Result<Vec<i64>, u8> {
         if let &ASTNode::Node { ref operands, .. } = self {
             let mut out = Vec::with_capacity(operands.len());
             for operand in operands.iter() {
@@ -254,12 +255,12 @@ impl ASTNode {
 //     }
 // }
 
-pub fn create_ast() -> Result<Box<ASTNode>, String> {
+pub fn create_ast() -> Result<Box<ASTNode>, u8> {
   // first let's try addition
   let mut operands = Vec::new();
-  operands.push(ASTNode::new_leaf(0, &String::from("")));
-  operands.push(ASTNode::new_leaf(0, &String::from("")));
-  Ok(ASTNode::new_node(0,&String::from(""),operands))
+  operands.push(ASTNode::new_leaf(0, 24));
+  operands.push(ASTNode::new_leaf(0, 42));
+  Ok(ASTNode::new_node(0,'+',operands))
 }
 
 // fn maybe_ast_node(
@@ -402,9 +403,9 @@ pub fn create_ast() -> Result<Box<ASTNode>, String> {
 //     }
 // }
 
-fn infix_operator_two_ints<F>(f: F, values: &Vec<String>) -> Result<String, String>
+fn infix_operator_two_ints<F>(f: F, values: &Vec<i64>) -> Result<i64, u8>
 where
-    F: Fn(i64, i64) -> Result<i64, String>,
+    F: Fn(i64, i64) -> Result<i64, u8>,
 {
     //TODO: constrain parse here
     //assert!(values.len() == 2);
@@ -419,7 +420,7 @@ where
     let left = 42;
     let right = 24;
     return match f(left, right) {
-        Ok(result) => Ok(String::from_i64(result)),
+        Ok(result) => Ok(result),
         Err(reason) => Err(reason),
     };
     //    }
@@ -430,7 +431,7 @@ where
     //        };
     //    }
     //}
-    Err(String::from(""))
+    Err(7)
 }
 
 // fn infix_operator_two_ints_or_two_strings<FI, FS>(

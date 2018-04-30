@@ -44,13 +44,13 @@ pub fn main(){
     //    }
     //}
     match process_expr() {
-        Ok(expr_result) => print_expr_ok(&expr_result),
-        Err(expr_error) => print_expr_error(&expr_error),
+        Ok(expr_result) => (),
+        Err(expr_error) => assert!(false),
     }
 }
 
 //fn process_expr(token_strings: &Vec<String>) -> Result<String, String> {
-fn process_expr() -> Result<String, String> {
+fn process_expr() -> Result<i64, u8> {
     //let maybe_tokens = tokens::strings_to_tokens(&token_strings);
     //let maybe_ast = syntax_tree::tokens_to_ast(maybe_tokens);
     let maybe_ast = syntax_tree::create_ast();
@@ -58,21 +58,21 @@ fn process_expr() -> Result<String, String> {
 }
 
 
-fn print_expr_ok(expr_result: &String) {
-    println!("{}", expr_result);
-    //if expr_result == "0" || expr_result == "" {
-    //    1
-    //} else {
-    //    0
-    //}
-}
+// fn print_expr_ok(expr_result: &String) {
+//     println!("{}", expr_result);
+//     //if expr_result == "0" || expr_result == "" {
+//     //    1
+//     //} else {
+//     //    0
+//     //}
+// }
 
-fn print_expr_error(expr_error: &String) {
-    //crash!(2, "{}", expr_error)
-    println!("{}", expr_error);
-}
+// fn print_expr_error(expr_error: &String) {
+//     //crash!(2, "{}", expr_error)
+//     println!("{}", expr_error);
+// }
 
-fn evaluate_ast(maybe_ast: Result<Box<syntax_tree::ASTNode>, String>) -> Result<String, String> {
+fn evaluate_ast(maybe_ast: Result<Box<syntax_tree::ASTNode>, u8>) -> Result<i64, u8> {
     if maybe_ast.is_err() {
         Err(maybe_ast.err().unwrap())
     } else {
