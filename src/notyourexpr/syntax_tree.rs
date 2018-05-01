@@ -156,7 +156,7 @@ impl ASTNode {
                     // "index" => prefix_operator_index(&operand_values),
                     // "substr" => prefix_operator_substr(&operand_values),
 
-                    _ => Err(1),
+                    _ => Err(0),
                 },
             },
         }
@@ -258,8 +258,10 @@ impl ASTNode {
 pub fn create_ast() -> Result<Box<ASTNode>, u8> {
   // first let's try addition
   let mut operands = Vec::new();
-  operands.push(ASTNode::new_leaf(0, 24));
-  operands.push(ASTNode::new_leaf(0, 42));
+   let left = 24i64.nondet();
+   let right = 42i64.nondet();
+   operands.push(ASTNode::new_leaf(0, left));
+   operands.push(ASTNode::new_leaf(0, right));
   Ok(ASTNode::new_node(0,'+',operands))
 }
 
@@ -417,8 +419,13 @@ where
     //        };
     //    }
     //}
-    let left = 42;
-    let right = 24;
+    //let left = 24i64.nondet();
+    //let right = 42i64.nondet();
+    let left = values[0];
+    let right = values[1];
+    //assume!(left > 0 && left < 10);
+    //assume!(right > 0 && right < 10);
+    //assert!(false);
     return match f(left, right) {
         Ok(result) => Ok(result),
         Err(reason) => Err(reason),
